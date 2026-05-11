@@ -1,0 +1,52 @@
+import { defineConfig } from 'vitepress'
+
+export default defineConfig({
+  title: 'aksika',
+  description: 'AI tools — persistent memory & autonomous bridge',
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
+
+  themeConfig: {
+    nav: [
+      { text: 'abmind', link: '/abmind/' },
+      { text: 'abtars', link: '/abtars/' },
+      { text: 'GitHub', link: 'https://github.com/aksika' },
+    ],
+
+    sidebar: {
+      '/abmind/': [
+        {
+          text: 'abmind',
+          items: [
+            { text: 'What is abmind?', link: '/abmind/' },
+            { text: 'Installation', link: '/abmind/install' },
+            { text: 'Integration Guide', link: '/abmind/integration' },
+            { text: 'CLI Reference', link: '/abmind/cli' },
+            { text: 'Memory System', link: '/abmind/memory' },
+            { text: 'Sleep & Dreams', link: '/abmind/sleep' },
+          ],
+        },
+      ],
+      '/abtars/': [
+        {
+          text: 'abtars',
+          items: [
+            { text: 'What is abtars?', link: '/abtars/' },
+            { text: 'Installation', link: '/abtars/install' },
+            { text: 'Commands', link: '/abtars/commands' },
+            { text: 'Transport Config', link: '/abtars/transport' },
+            { text: 'Model Management', link: '/abtars/models' },
+            { text: 'Platforms', link: '/abtars/platforms' },
+          ],
+        },
+      ],
+    },
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/aksika' },
+    ],
+
+    search: {
+      provider: 'local',
+    },
+  },
+})
