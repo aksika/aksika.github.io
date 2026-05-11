@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: aksika
+  name: abTARS
   text: AI tools that remember
   tagline: Persistent memory & autonomous bridge for AI agents
   image:
@@ -12,7 +12,7 @@ hero:
       text: abmind — Memory
       link: /abmind/
     - theme: alt
-      text: abtars — Bridge
+      text: abTARS — Bridge
       link: /abtars/
 
 features:
