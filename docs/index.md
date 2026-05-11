@@ -23,5 +23,5 @@ features:
     details: Autonomous AI bridge — connects models to Telegram, Discord, IRC. Multi-provider fallback, scheduled tasks, sleep cycles, peer-to-peer agent communication.
     link: /abtars/
   - title: Open Source
-    details: Both projects are MIT-licensed and designed to run on your hardware. No cloud dependency, no data leaves your machine.
+    details: Both projects are Apache 2.0-licensed and designed to run on your hardware. No cloud dependency, no data leaves your machine.
 ---
