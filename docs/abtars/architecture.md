@@ -13,6 +13,14 @@
                     │   abmind    │
                     │  (memory)   │
                     └─────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│                    A2A (Peer-to-Peer)                    │
+│                                                         │
+│  abTARS instance ◀──── /v1/chat/completions ────▶ abTARS instance  │
+│  (KP on WSL)          JWT + digital signatures     (Molty on Mac)  │
+│                       over Tailscale                               │
+└─────────────────────────────────────────────────────────┘
 ```
 
 **Platforms** receive messages from users and deliver responses back.
@@ -22,6 +30,19 @@
 **Transport** communicates with AI models — either by spawning a CLI tool (Kiro, Gemini) or calling an HTTP API (ollama, OpenRouter).
 
 **abmind** provides persistent memory — recall on every turn, store after every response, sleep cycles for maintenance.
+
+**A2A (Agent-to-Agent)** enables peer communication between abTARS instances. Agents can ask each other questions, delegate tasks, and share information over an authenticated channel.
+
+## A2A Protocol
+
+Two abTARS instances communicate via OpenAI-compatible `/v1/chat/completions` endpoint over Tailscale:
+
+- **Authentication** — per-peer JWT tokens + digital signatures
+- **Anti-loop** — hop counting prevents infinite ping-pong
+- **Firewall traversal** — UDP wakeup + callback mechanism for NAT/corporate firewalls
+- **Agent tools** — `peer_ask` (single question), `peer_chat` (multi-turn session), `peer_wakeup` (wake sleeping peer)
+
+Configure peers in `~/.abtars/config/peers.json`.
 
 ## Boot Phases
 
