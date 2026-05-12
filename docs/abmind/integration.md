@@ -11,7 +11,7 @@ abmind integrates with any AI tool that supports hooks, MCP, or direct Node.js e
 | **MCP server** | Cursor, Windsurf, Continue, Zed, any MCP client | `abmind mcp` (stdio) |
 | **Hooks (standalone)** | Custom CLI tools, scripts | Call `abmind hook-*` commands |
 | **Node.js library** | Embedding in your own app | `import { MemoryManager } from "abmind"` |
-| **abtars (in-process)** | Autonomous bridge | Built-in, no setup needed |
+| **abTARS (in-process)** | Autonomous bridge | Built-in, no setup needed |
 
 ---
 
@@ -153,6 +153,6 @@ backend.close();
 
 ---
 
-## abtars (In-Process)
+## abTARS (In-Process)
 
-When running as part of abtars, abmind is loaded in-process via `file:../abmind` dependency. No separate setup — `abtars install` handles everything. Memory is available to all agents (professor, dreamy, browsie, coding) and the heartbeat/sleep system.
+When running as part of abTARS, abmind is loaded in-process via `file:../abmind` dependency. No separate setup — `abtars install` handles everything. Memory is available to all agents (professor, dreamy, browsie, coding) and the heartbeat/sleep system.

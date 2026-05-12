@@ -10,12 +10,12 @@ Every conversation turn is recorded. A background "sleep" cycle extracts facts, 
 
 ## Use it with
 
+- **abTARS** — in-process memory for the autonomous bridge
 - **Kiro CLI** — native hooks + MCP server (`abmind install-host kiro`)
 - **Claude Code** — hooks + MCP server (`abmind install-host claude`)
 - **Gemini CLI** — hooks + MCP server (`abmind install-host gemini`)
 - **OpenAI Codex CLI** — hooks + MCP server (`abmind install-host codex`)
 - **OpenClaw** — ContextEngine plugin (drop-in replacement for lossless-claw)
-- **abtars** — in-process memory for the autonomous bridge
 - **Any MCP client** — `abmind mcp` starts a stdio MCP server (works with Cursor, Windsurf, Continue, Zed, etc.)
 
 ## Quick start

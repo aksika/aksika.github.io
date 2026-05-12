@@ -1,8 +1,8 @@
-# abtars
+# abTARS
 
 **Autonomous AI bridge — your agent, your hardware, your rules.**
 
-abtars connects AI models to messaging platforms (Telegram, Discord, IRC) and runs them autonomously with scheduled tasks, multi-provider fallback, persistent memory via abmind, and peer-to-peer agent communication.
+abTARS connects AI models to messaging platforms (Telegram, Discord, IRC) and runs them autonomously with scheduled tasks, multi-provider fallback, persistent memory via abmind, and peer-to-peer agent communication.
 
 ## What it does
 
@@ -11,7 +11,7 @@ abtars connects AI models to messaging platforms (Telegram, Discord, IRC) and ru
 - Manages conversation sessions, context windows, and streaming responses
 - Runs scheduled tasks (cron), sleep cycles, and health monitoring
 - Falls back automatically when a model is unavailable
-- Communicates with other abtars instances via peer-to-peer A2A protocol
+- Communicates with other abTARS instances via peer-to-peer A2A protocol
 
 ## Quick start
 

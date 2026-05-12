@@ -21,7 +21,7 @@ abtars start
 
 ## Providers
 
-abtars supports multiple model providers out of the box:
+abTARS supports multiple model providers out of the box:
 
 | Provider | Transport | Setup |
 |----------|-----------|-------|
