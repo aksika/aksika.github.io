@@ -1,5 +1,7 @@
 # Commands
 
+All commands work on Telegram, Discord, and IRC unless noted otherwise.
+
 ## Session
 
 | Command | Description |
@@ -7,7 +9,7 @@
 | `/new` | Fresh session (keeps current mode) |
 | `/reset` | Reload transport config + fresh session |
 | `/reset default` | Restore factory transport.json + fresh session |
-| `/compact` | Compact context window |
+| `/compact` | Compact context window (summarize + fresh session) |
 | `/stop`, `/ctrlc` | Stop current response |
 | `/restart` | Restart bridge process |
 
@@ -15,14 +17,15 @@
 
 | Command | Description |
 |---------|-------------|
-| `/model` | Show current model, transport, agent status |
-| `/model change` | Interactive model/provider picker (Telegram) |
-| `/model quick <model>` | Instant switch on current provider |
-| `/model list [provider]` | List providers or models on a provider |
-| `/model restore` | Undo last model/provider switch |
-| `/model default` | Factory reset transport config |
-| `/model health reset` | Reset model health buckets |
-| `/model emergency` | Activate paid hailMary model |
+| `/models` | Show current model, transport, agent status |
+| `/models change` | Interactive 3-step picker (Telegram only) |
+| `/models quick <model>` | Instant switch on same provider |
+| `/models list [provider]` | List providers or models on a provider |
+| `/models restore` | Undo last model/provider switch |
+| `/models default` | Factory reset (transport.default.json) |
+| `/models health reset` | Reset model health buckets |
+| `/models emergency` | 🚨 Activate paid hailMary model |
+| `/emergency` | Shortcut for `/models emergency` |
 
 ## Status & Diagnostics
 
@@ -31,7 +34,8 @@
 | `/status` | Bridge status, transport, uptime |
 | `/doctor` | Deep probe all subsystems |
 | `/doctor fix` | Run safe auto-repairs |
-| `/heartbeat` | Heartbeat diagnostics |
+| `/doctor fix-full` | Full repair (+ FTS rebuild, WAL checkpoint) |
+| `/heartbeat` | Heartbeat diagnostics (tasks, last tick) |
 | `/mcp` | MCP server status |
 | `/hooks` | List configured hooks |
 
@@ -41,6 +45,7 @@
 |---------|-------------|
 | `/memory` | Memory storage statistics |
 | `/facts` | Core knowledge (user profile + agent notes) |
+| `/nlm` | Knowledge base (list/create/sources/query) |
 
 ## Tasks
 
@@ -57,7 +62,6 @@
 | `/skills` | List loaded skills |
 | `/coding` | Switch to coding agent |
 | `/default` | Switch back to default agent |
-| `/nlm` | Knowledge base operations |
 
 ## Sleep
 
@@ -75,3 +79,11 @@
 | `/full` | Raw output, TTS disabled |
 | `/short` | Clean responses (default) |
 | `/healing` | Toggle self-healer on/off |
+
+## Platform-specific
+
+| Command | Platform | Description |
+|---------|----------|-------------|
+| `/users` | All | List users, approve/revoke access |
+| `/users approve <id>` | All | Approve a new user by platform ID |
+| `/users revoke <id>` | All | Revoke user access |
