@@ -1,12 +1,33 @@
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+}
+
+/* Hero image: full width, content below */
 .VPHero .VPImage {
-  max-width: 100% !important;
-  max-height: 500px !important;
-  width: 500px !important;
+  max-width: 800px !important;
+  max-height: 800px !important;
+  width: 800px !important;
 }
 
 .VPHero .VPImage img {
-  max-width: 100% !important;
-  max-height: 500px !important;
-  width: 500px !important;
+  max-width: 800px !important;
+  max-height: 800px !important;
+  width: 800px !important;
   object-fit: contain;
+}
+
+/* Force stacked layout: image on top, text below */
+.VPHero .container {
+  flex-direction: column-reverse !important;
+  text-align: center;
+}
+
+.VPHero .main {
+  max-width: 100% !important;
+  text-align: center;
+}
+
+.VPHero .actions {
+  justify-content: center;
 }
