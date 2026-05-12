@@ -2,34 +2,43 @@
   --vp-home-hero-name-color: transparent;
 }
 
-/* Hero image: large, centered */
+/* Let image be full width, no constraints */
 .VPHero .VPImage {
-  max-width: 800px !important;
-  max-height: 800px !important;
-  width: 800px !important;
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 .VPHero .VPImage img {
-  max-width: 800px !important;
-  max-height: 800px !important;
-  width: 800px !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
   object-fit: contain;
 }
 
-/* Stacked layout: image on top, buttons below */
+/* Stack vertically: image full width on top, buttons well below */
 .VPHero .container {
   flex-direction: column-reverse !important;
   align-items: center;
   text-align: center;
-  gap: 2rem;
+  gap: 0;
+  max-width: 100% !important;
+  padding: 0 !important;
 }
 
 .VPHero .main {
   max-width: 100% !important;
   text-align: center;
+  padding-top: 2rem;
 }
 
-/* Hide empty name/text/tagline space */
+.VPHero .image {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Hide empty name/text/tagline */
 .VPHero .name,
 .VPHero .text,
 .VPHero .tagline {
@@ -38,4 +47,14 @@
 
 .VPHero .actions {
   justify-content: center;
+  padding-top: 1rem;
+}
+
+/* Remove default hero padding that causes overlap */
+.VPHero {
+  padding: 0 !important;
+}
+
+.VPHome {
+  padding-bottom: 0 !important;
 }
