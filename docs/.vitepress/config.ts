@@ -18,6 +18,7 @@ export default defineConfig({
           text: 'abmind',
           items: [
             { text: 'What is abmind?', link: '/abmind/' },
+            { text: 'Why abmind?', link: '/abmind/why' },
             { text: 'Installation', link: '/abmind/install' },
             { text: 'Integration Guide', link: '/abmind/integration' },
             { text: 'CLI Reference', link: '/abmind/cli' },
