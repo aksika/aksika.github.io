@@ -26,8 +26,10 @@ abmind update
 Install into your AI tool with one command:
 
 ```bash
+abmind install-host kiro      # Kiro CLI
 abmind install-host claude    # Claude Code
 abmind install-host gemini    # Gemini CLI
+abmind install-host codex     # OpenAI Codex CLI
 ```
 
 This sets up lifecycle hooks, MCP server registration, and context files. Safe to re-run. Uninstall with `--uninstall`.
