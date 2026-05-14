@@ -23,13 +23,13 @@ abmind sleep --level normal    # CLI
 
 | Product | Max Level | Trigger | Notes |
 |---------|-----------|---------|-------|
-| **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full sleep with subagent (Dreamy). Optional hardware sleep after cycle. Dream report to user. |
-| **OpenClaw** | `normal` | Cron (`0 3 * * *`) or manual | Plugin registers sleep cron on gateway start. No hardware sleep. |
-| **Hermes-Agent** | `budget` | Auto-registered cron (gateway) or manual | Plugin triggers budget sleep on session end if >24h stale. Full sleep via `abmind sleep --level normal` in system cron. |
-| **Kiro CLI / Claude / Gemini** | `native` | Hook-triggered extraction (agent-driven) | Agent produces JSON during session, `hook-wakeup` applies it. Full sleep requires `ABMIND_LLM_CMD` env var pointing to an LLM CLI. |
-| **MCP (standalone)** | `native` | Hook-triggered or manual | Same — `abmind sleep --level normal` needs `ABMIND_LLM_CMD`. Without it, only `native` (no LLM). |
+| **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full multi-step sleep with subagent (Dreamy). Optional hardware sleep after cycle. Dream report to user. |
+| **OpenClaw** | `basic` | Cron (`0 3 * * *`) or manual | Single LLM call. Plugin registers sleep cron on gateway start. |
+| **Hermes-Agent** | `basic` | Auto-registered cron (gateway) or session-end | Single LLM call. Plugin triggers budget sleep on session end if >24h stale. |
+| **Kiro CLI / Claude / Gemini** | `basic` | Hook-triggered extraction (agent-driven) | Single LLM call via `ABMIND_LLM_CMD`. Or `native` (no LLM) if agent produces JSON during session. |
+| **MCP (standalone)** | `basic` | System cron or manual | Single LLM call via `ABMIND_LLM_CMD`. |
 
-**Why the difference:** abTARS has a dedicated sleep subagent (Dreamy) with its own transport and session. Other products call `abmind sleep` as a CLI subprocess — works for all levels but lacks the multi-turn conversational extraction that Dreamy provides at `ultimate` level.
+**Why the difference:** Only abTARS has a dedicated sleep subagent (Dreamy) with its own multi-turn session. All other products call `abmind sleep` as a single LLM call (`basic` level) — one prompt, one response, extract + consolidate in one shot.
 
 ## What Sleep Does
 
