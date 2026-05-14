@@ -23,7 +23,7 @@ abmind sleep --level normal    # CLI
 
 | Product | Max Level | Trigger | Notes |
 |---------|-----------|---------|-------|
-| **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full sleep with subagent (Dreamy). Hardware sleep after cycle. Dream report to user. |
+| **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full sleep with subagent (Dreamy). Optional hardware sleep after cycle. Dream report to user. |
 | **OpenClaw** | `normal` | Cron (`0 3 * * *`) or manual | Plugin registers sleep cron on gateway start. No hardware sleep. |
 | **Hermes-Agent** | `budget` | Auto-registered cron (gateway) or manual | Plugin triggers budget sleep on session end if >24h stale. Full sleep via `abmind sleep --level normal` in system cron. |
 | **Kiro CLI / Claude / Gemini** | `normal` | System cron only | No daemon — add `0 3 * * * abmind sleep --level normal` to crontab. |
