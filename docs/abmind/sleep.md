@@ -19,6 +19,18 @@ abmind sleep --level normal    # CLI
 | `normal` | Full cycle (extract, consolidate, contradictions, aging) | ~15 | 5-15 min |
 | `ultimate` | Deep analysis + skill review + retrospective | ~30 | 15-30 min |
 
+## Sleep Support by Product
+
+| Product | Max Level | Trigger | Notes |
+|---------|-----------|---------|-------|
+| **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full sleep with subagent (Dreamy). Hardware sleep after cycle. Dream report to user. |
+| **OpenClaw** | `normal` | Cron (`0 3 * * *`) or manual | Plugin registers sleep cron on gateway start. No hardware sleep. |
+| **Hermes-Agent** | `budget` | Auto-registered cron (gateway) or manual | Plugin triggers budget sleep on session end if >24h stale. Full sleep via `abmind sleep --level normal` in system cron. |
+| **Kiro CLI / Claude / Gemini** | `normal` | System cron only | No daemon — add `0 3 * * * abmind sleep --level normal` to crontab. |
+| **MCP (standalone)** | `normal` | System cron only | Same as above — MCP server doesn't manage lifecycle. |
+
+**Why the difference:** abTARS has a dedicated sleep subagent (Dreamy) with its own transport and session. Other products call `abmind sleep` as a CLI subprocess — works for all levels but lacks the multi-turn conversational extraction that Dreamy provides at `ultimate` level.
+
 ## What Sleep Does
 
 1. **Extract** — pull facts, preferences, entities from unprocessed messages
