@@ -15,6 +15,7 @@ Every conversation turn is recorded. A background "sleep" cycle extracts facts, 
 - **Claude Code** — hooks + MCP server (`abmind install-host claude`)
 - **Gemini CLI** — hooks + MCP server (`abmind install-host gemini`)
 - **OpenAI Codex CLI** — hooks + MCP server (`abmind install-host codex`)
+- **Hermes-Agent** — memory provider plugin (automatic recall/store every turn)
 - **OpenClaw** — ContextEngine plugin (drop-in replacement for lossless-claw)
 - **Any MCP client** — `abmind mcp` starts a stdio MCP server (works with Cursor, Windsurf, Continue, Zed, etc.)
 

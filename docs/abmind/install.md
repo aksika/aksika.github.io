@@ -32,6 +32,17 @@ abmind install-host gemini    # Gemini CLI
 abmind install-host codex     # OpenAI Codex CLI
 ```
 
+### Hermes-Agent
+
+Hermes uses a plugin directory instead of `install-host`:
+
+```bash
+cp -r <abmind-repo>/hermes-plugin/abmind ~/.hermes/plugins/abmind/
+# Then in ~/.hermes/config.yaml:
+#   memory:
+#     provider: abmind
+```
+
 This sets up lifecycle hooks, MCP server registration, and context files. Safe to re-run. Uninstall with `--uninstall`.
 
 ## Requirements

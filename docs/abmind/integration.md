@@ -7,6 +7,7 @@ abmind integrates with any AI tool that supports hooks, MCP, or direct Node.js e
 | Path | Best for | Setup |
 |------|----------|-------|
 | **install-host** | Kiro CLI, Claude Code, Gemini CLI, Codex CLI | `abmind install-host <host>` |
+| **Hermes plugin** | Hermes-Agent | Copy plugin to `~/.hermes/plugins/abmind/` |
 | **OpenClaw plugin** | OpenClaw gateway | Install as ContextEngine plugin |
 | **MCP server** | Cursor, Windsurf, Continue, Zed, any MCP client | `abmind mcp` (stdio) |
 | **Hooks (standalone)** | Custom CLI tools, scripts | Call `abmind hook-*` commands |
@@ -36,6 +37,33 @@ What it configures per host:
 | Codex CLI | SessionStart, UserPrompt, Stop | ✅ registered | `CODEX.md` |
 
 Safe to re-run (idempotent). Backs up existing config before modifying. Uninstall with `--uninstall`.
+
+---
+
+## Hermes-Agent Plugin
+
+abmind implements Hermes's `MemoryProvider` interface — automatic recall and store on every turn without the model needing to call a tool.
+
+```bash
+# Copy plugin to Hermes
+cp -r <abmind-repo>/hermes-plugin/abmind ~/.hermes/plugins/abmind/
+
+# Configure in ~/.hermes/config.yaml:
+memory:
+  provider: abmind
+```
+
+What it provides:
+
+| Feature | How |
+|---------|-----|
+| Auto-recall | Relevant memories injected before every turn |
+| Auto-store | Every turn recorded in background |
+| Pre-compress capture | Saves messages before Hermes discards them |
+| Tools | `abmind_recall` + `abmind_store` for explicit use |
+| Sleep | Auto-registered cron (gateway mode) or manual |
+
+Unlike MCP-only integrations, the model doesn't need to decide to "save" or "recall" — it happens automatically on every turn.
 
 ---
 
