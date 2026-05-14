@@ -45,25 +45,40 @@ Safe to re-run (idempotent). Backs up existing config before modifying. Uninstal
 abmind implements Hermes's `MemoryProvider` interface — automatic recall and store on every turn without the model needing to call a tool.
 
 ```bash
-# Copy plugin to Hermes
-cp -r <abmind-repo>/hermes-plugin/abmind ~/.hermes/plugins/abmind/
+# 1. Install abmind (npm or from source)
+npm install -g abmind && abmind install
 
-# Configure in ~/.hermes/config.yaml:
+# 2. Copy plugin files to Hermes
+mkdir -p ~/.hermes/plugins/abmind
+cp <abmind-repo>/hermes-plugin/__init__.py ~/.hermes/plugins/abmind/
+cp <abmind-repo>/hermes-plugin/plugin.yaml ~/.hermes/plugins/abmind/
+
+# 3. Configure ~/.hermes/config.yaml:
 memory:
   provider: abmind
+
+# 4. Set env vars in your hermes .env:
+ABMIND_HOME=/path/to/.abmind
+TELEGRAM_HOME_CHANNEL=<your-chat-id>
 ```
 
 What it provides:
 
 | Feature | How |
 |---------|-----|
-| Auto-recall | Relevant memories injected before every turn |
+| Auto-recall | Relevant memories injected before every turn (full 7-layer pipeline) |
 | Auto-store | Every turn recorded in background |
 | Pre-compress capture | Saves messages before Hermes discards them |
 | Tools | `abmind_recall` + `abmind_store` for explicit use |
 | Sleep | Auto-registered cron (gateway mode) or manual |
 
 Unlike MCP-only integrations, the model doesn't need to decide to "save" or "recall" — it happens automatically on every turn.
+
+**Requirements:** Node.js 22+, `abmind` on PATH, `ABMIND_HOME` and `TELEGRAM_HOME_CHANNEL` env vars set.
+
+**Known limitation:** Hermes does not call `prefetch()` on the first turn of a new session. First turn gets wake-up context only (~200 chars). Subsequent turns get full 7-layer recall.
+
+**Architecture:** The plugin is a thin routing layer — all logic lives in abmind core. Tool-originated stores default to confidence=1 (unverified). Sleep promotes to confidence=3 when corroborated.
 
 ---
 
