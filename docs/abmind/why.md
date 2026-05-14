@@ -60,6 +60,18 @@ Three search strategies combined for high recall:
 
 Hybrid mode uses all three and merges results. Falls back gracefully if ollama isn't available.
 
+### Works with agglutinative languages
+
+Most memory systems fail on languages like Hungarian, Turkish, Finnish, and Japanese — where a single word can carry dozens of suffixes (`barátaiméknak`, `çalışamayacaklarmış`). Standard tokenizers split these wrong, FTS misses inflected forms, and keyword matching breaks entirely.
+
+abmind handles this through:
+- **Trigram matching** — finds partial word overlaps regardless of suffixes
+- **Bilingual storage** — memories stored in both original language and English translation
+- **Semantic embeddings** — meaning-based recall that ignores surface form
+- **Possessive/suffix-aware entity matching** — "Alice's", "alices", "Alice" all resolve to the same entity
+
+Recall works in Hungarian, Turkish, and other morphologically rich languages out of the box — no language-specific configuration needed.
+
 ## One Command Install
 
 ```bash
