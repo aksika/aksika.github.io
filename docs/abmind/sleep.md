@@ -26,8 +26,8 @@ abmind sleep --level normal    # CLI
 | **abTARS** | `ultimate` | Automatic (BED_TIME + quiet ticks) | Full sleep with subagent (Dreamy). Optional hardware sleep after cycle. Dream report to user. |
 | **OpenClaw** | `normal` | Cron (`0 3 * * *`) or manual | Plugin registers sleep cron on gateway start. No hardware sleep. |
 | **Hermes-Agent** | `budget` | Auto-registered cron (gateway) or manual | Plugin triggers budget sleep on session end if >24h stale. Full sleep via `abmind sleep --level normal` in system cron. |
-| **Kiro CLI / Claude / Gemini** | `normal` | System cron only | No daemon — add `0 3 * * * abmind sleep --level normal` to crontab. |
-| **MCP (standalone)** | `normal` | System cron only | Same as above — MCP server doesn't manage lifecycle. |
+| **Kiro CLI / Claude / Gemini** | `native` | Hook-triggered extraction (agent-driven) | Agent produces JSON during session, `hook-wakeup` applies it. Full sleep requires `ABMIND_LLM_CMD` env var pointing to an LLM CLI. |
+| **MCP (standalone)** | `native` | Hook-triggered or manual | Same — `abmind sleep --level normal` needs `ABMIND_LLM_CMD`. Without it, only `native` (no LLM). |
 
 **Why the difference:** abTARS has a dedicated sleep subagent (Dreamy) with its own transport and session. Other products call `abmind sleep` as a CLI subprocess — works for all levels but lacks the multi-turn conversational extraction that Dreamy provides at `ultimate` level.
 
