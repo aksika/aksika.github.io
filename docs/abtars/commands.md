@@ -60,8 +60,28 @@ All commands work on Telegram, Discord, and IRC unless noted otherwise.
 | Command | Description |
 |---------|-------------|
 | `/skills` | List loaded skills |
-| `/coding` | Switch to coding agent |
 | `/default` | Switch back to default agent |
+
+## Sessions
+
+| Command | Description |
+|---------|-------------|
+| `/session` | List all sessions |
+| `/session new` | Create new Main session, switch to it |
+| `/session new browse` | Create Browse session |
+| `/session new code` | Create Code session (replaces `/coding`) |
+| `/session new task` | Create Task session |
+| `/session <#>` | Switch to session by number |
+| `/session end [#]` | End session gracefully (messages kept in memory) |
+| `/session kill <#>` | Kill session and wipe its messages |
+
+Session ID format: `{timestamp}_{type}_{index}` (e.g. `1747563282_A_01`).
+Types: **A**=Main, **B**=Browse, **C**=Code, **T**=Task.
+
+- Session #1 is always Main — cannot be killed, `/session end` resets it
+- All sessions cleared on bridge restart
+- Master-only (non-master users cannot manage sessions)
+- Max concurrent sessions: `MAX_SESSIONS` env (default: 10)
 
 ## Sleep
 
