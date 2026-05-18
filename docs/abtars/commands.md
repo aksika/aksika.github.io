@@ -78,7 +78,7 @@ All commands work on Telegram, Discord, and IRC unless noted otherwise.
 Session ID format: `{timestamp}_{type}_{index}` (e.g. `1747563282_A_01`).
 Types: **A**=Main, **B**=Browse, **C**=Code, **T**=Task.
 
-- Session #1 is always Main — cannot be killed, `/session end` resets it
+- At least one Main session must be active per platform at all times
 - All sessions cleared on bridge restart
 - Master-only (non-master users cannot manage sessions)
 - Max concurrent sessions: `MAX_SESSIONS` env (default: 10)
