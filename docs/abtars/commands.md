@@ -6,7 +6,6 @@ All commands work on Telegram, Discord, and IRC unless noted otherwise.
 
 | Command | Description |
 |---------|-------------|
-| `/new` | Fresh session (keeps current mode) |
 | `/reset` | Reload transport config + fresh session |
 | `/reset default` | Restore factory transport.json + fresh session |
 | `/compact` | Compact context window (summarize + fresh session) |
