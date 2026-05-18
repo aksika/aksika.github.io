@@ -35,3 +35,9 @@ abtars start
 - **Skills** — extensible via markdown skill files
 
 → [Installation guide](/abtars/install)
+
+## Community
+
+- **Discord:** [Join our server](https://discord.gg/pj2qbWJT8)
+- **Email:** aksikatwo@gmail.com
+- **GitHub:** [aksika/abtars](https://github.com/aksika/abtars)

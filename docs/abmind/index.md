@@ -37,3 +37,9 @@ abmind install-host kiro      # or: claude, gemini, codex
 - **Zero cloud** — everything runs locally (SQLite + optional ollama)
 
 → [Installation guide](/abmind/install)
+
+## Community
+
+- **Discord:** [Join our server](https://discord.gg/pj2qbWJT8)
+- **Email:** aksikatwo@gmail.com
+- **GitHub:** [aksika/abmind](https://github.com/aksika/abmind)
