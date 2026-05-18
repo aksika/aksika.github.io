@@ -1,36 +1,88 @@
 # Process Supervision
 
-How to run abTARS as a persistent service.
+How abTARS stays alive. Four layers of defense — each catches what the one below can't.
 
 ## Quick start
 
 ```bash
 abtars start      # start bridge (foreground)
 abtars stop       # stop bridge + watchdog
-abtars restart    # restart bridge
+abtars restart    # restart bridge (rolling)
 ```
+
+## 4-Layer Resilience Model
+
+```
+┌─────────────────────────────────────────────────────┐
+│  L4: OS Service Manager (launchd / systemd)         │
+│  Restarts watchdog on crash, starts on boot         │
+├─────────────────────────────────────────────────────┤
+│  L3: Watchdog Script (scripts/watchdog.sh)          │
+│  Polls bridge.lock heartbeat every 30s              │
+│  Kills + restarts bridge if heartbeat stale >60s    │
+├─────────────────────────────────────────────────────┤
+│  L2: In-Process Timer (60s wall-clock check)        │
+│  Detects frozen event loop (setTimeout never fires) │
+│  Exits with code 1 → L3 restarts                   │
+├─────────────────────────────────────────────────────┤
+│  L1: Heartbeat System (5-min tick)                  │
+│  Writes timestamp to bridge.lock every tick         │
+│  Runs health tasks (DB integrity, transport, etc)   │
+└─────────────────────────────────────────────────────┘
+```
+
+| Layer | Detects | Recovery | Speed |
+|-------|---------|----------|-------|
+| L1 | Normal operation | Writes heartbeat, runs tasks | Every 5 min |
+| L2 | Frozen event loop, infinite sync loop | `process.exit(1)` | 60s max |
+| L3 | Dead process, stale heartbeat, OOM kill | Kill + respawn bridge | 30-90s |
+| L4 | Dead watchdog, system reboot | Respawn watchdog | On boot / immediate |
+
+## What kills what
+
+| Scenario | Caught by | Recovery time |
+|----------|-----------|---------------|
+| Unhandled exception | L3 (process exits, watchdog restarts) | ~5s |
+| Event loop blocked (sync I/O hang) | L2 (timer fires, exits) → L3 restarts | 60-90s |
+| OOM kill | L3 (process gone, heartbeat stale) | 30-60s |
+| Watchdog crash | L4 (launchd/systemd restarts it) | ~5s |
+| System reboot | L4 (starts on boot) | Boot time |
+| `abtars stop` | Intentional — nothing restarts | Manual `abtars start` |
+| `abtars stop --force` | Kills L3 + bridge. L4 does NOT restart (bootout) | Manual |
 
 ## macOS (launchd)
 
-abTARS installs a launchd plist for automatic restart:
+Installed automatically by `abtars install`:
 
-```bash
-abtars install    # sets up launchd plist
+```
+~/Library/LaunchAgents/com.abtars.watchdog.plist
 ```
 
-The watchdog monitors the bridge process and restarts it on crash. Use `abtars stop --force` to stop both watchdog and bridge (prevents auto-restart).
+- `KeepAlive: true` — launchd restarts watchdog if it dies
+- `RunAtLoad: true` — starts on login
+- Watchdog runs bridge as a child process
+
+### Commands
+
+```bash
+abtars start              # start bridge (watchdog manages it)
+abtars stop --force       # stop everything (bootout from launchd)
+abtars restart            # rolling restart (no downtime)
+launchctl list | grep abtars   # verify launchd status
+```
+
+`--force` is required on macOS because without it, launchd respawns immediately.
 
 ## Linux (systemd)
 
-Create a user service:
+User service at `~/.config/systemd/user/abtars-watchdog.service`:
 
 ```ini
-# ~/.config/systemd/user/abtars.service
 [Unit]
-Description=abTARS Bridge
+Description=abTARS Watchdog
 
 [Service]
-ExecStart=%h/.abtars/bin/abtars start
+ExecStart=%h/.abtars/watchdog.sh --all --web --agent --irc
 Restart=on-failure
 RestartSec=5
 
@@ -39,16 +91,63 @@ WantedBy=default.target
 ```
 
 ```bash
-systemctl --user enable abtars
-systemctl --user start abtars
+systemctl --user enable abtars-watchdog
+systemctl --user start abtars-watchdog
+systemctl --user status abtars-watchdog
 ```
+
+## bridge.lock
+
+The heartbeat file at `~/.abtars/bridge.lock`. Written atomically (write .tmp → fsync → rename). Contains:
+
+```json
+{
+  "pid": 12345,
+  "startedAt": 1747563282000,
+  "version": "0.1.0-8ea5f43",
+  "sleepStatus": "awake",
+  "argv": ["--all", "--web", "--agent", "--irc"],
+  "lastHeartbeat": 1747563582000
+}
+```
+
+The watchdog reads `lastHeartbeat` — if older than 60s, the bridge is considered dead.
 
 ## Health monitoring
 
-The bridge writes a heartbeat to `~/.abtars/bridge.lock`. The watchdog checks this file — if the heartbeat goes stale, the bridge is restarted.
+The heartbeat tick (L1) runs these checks every 5 minutes:
 
-Check status:
+| Task | What it checks |
+|------|---------------|
+| DB integrity | FTS5 index health |
+| Transport health | Model API reachable |
+| Model health | Bucket levels, cooldowns |
+| Update check | New version available on npm |
+| Bedtime | Quiet ticks for sleep trigger |
+| Restart check | Pending restart flag in bridge.lock |
+
+## User commands
+
 ```
-/status       → uptime, last heartbeat
-/doctor       → full health probe
+/status       → uptime, PID, version, last heartbeat, model, sleep status
+/doctor       → full health probe (memory, transport, ollama, permissions)
+/model doctor → probe all configured models for availability
 ```
+
+## Frozen watchdog (nuclear option)
+
+If everything is stuck and `abtars stop --force` doesn't work:
+
+```bash
+# macOS
+launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.abtars.watchdog.plist
+pkill -9 -f "watchdog.sh"
+pkill -9 -f "node current"
+
+# Linux
+systemctl --user stop abtars-watchdog
+pkill -9 -f "watchdog.sh"
+pkill -9 -f "node current"
+```
+
+Then `abtars start` to bring it back cleanly.
