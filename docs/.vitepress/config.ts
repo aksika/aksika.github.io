@@ -36,6 +36,7 @@ export default defineConfig({
             { text: 'Architecture', link: '/abtars/architecture' },
             { text: 'Installation', link: '/abtars/install' },
             { text: 'Commands', link: '/abtars/commands' },
+            { text: 'Sessions', link: '/abtars/sessions' },
             { text: 'Transport Config', link: '/abtars/transport' },
             { text: 'Model Management', link: '/abtars/models' },
             { text: 'Platforms', link: '/abtars/platforms' },
