@@ -13,6 +13,11 @@ abtars update
 abtars start
 ```
 
+If `abtars update` shows a systemd warning, run:
+```bash
+systemctl --user daemon-reload && systemctl --user restart abtars-watchdog
+```
+
 ## Requirements
 
 - Node.js 22+
