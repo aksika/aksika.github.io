@@ -51,7 +51,7 @@ All commands work on Telegram, Discord, and IRC unless noted otherwise.
 | Command | Description |
 |---------|-------------|
 | `/tasks` | List scheduled tasks |
-| `/tasks trigger <id>` | Manually fire a task |
+| `/task run <id>` | Manually fire a task |
 | `/tasks log <id>` | Last 5 runs for a task |
 
 ## Skills & Mode
