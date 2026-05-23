@@ -31,8 +31,8 @@ export default defineConfig({
         {
           text: 'abtars',
           items: [
-            { text: 'Important Notes', link: '/abtars/important' },
             { text: 'What is abTARS?', link: '/abtars/' },
+            { text: 'Important Notes', link: '/abtars/important' },
             { text: 'Why abTARS?', link: '/abtars/why' },
             { text: 'Architecture', link: '/abtars/architecture' },
             { text: 'Installation', link: '/abtars/install' },
