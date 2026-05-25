@@ -1,49 +1,31 @@
 # Scheduled Tasks
 
-abTARS runs scheduled tasks via a cron-like system. View and manage with `/tasks`.
+abTARS runs scheduled tasks via a built-in task system. No crontab needed — the agent manages everything.
 
-## Defining Tasks
+## Creating tasks via chat
 
-Tasks are defined in `~/.abtars/config/tasks.json`:
+Just ask the agent in natural language:
 
-```json
-[
-  {
-    "id": "daily-report",
-    "title": "Daily AI Report",
-    "schedule": "0 9 * * *",
-    "message": "Generate the daily report",
-    "enabled": true
-  },
-  {
-    "id": "backup",
-    "title": "Memory Backup",
-    "schedule": "0 3 * * *",
-    "message": "Run abmind backup",
-    "executor": "script",
-    "command": "abmind backup"
-  }
-]
-```
+| You say | What happens |
+|---------|-------------|
+| "Remind me every morning at 9 to check emails" | Creates a recurring reminder at 09:00 daily |
+| "Every Friday at 5pm, summarize my week" | Creates a recurring agent task — runs autonomously and sends you the result |
+| "Remind me tomorrow at 3pm about the dentist" | Creates a one-shot reminder |
+| "Run a backup every night at 3am" | Creates a recurring script task |
 
-## Schedule Format
+The agent reads the task skill, picks the right command, and confirms what it created. You don't need to know any CLI syntax.
 
-Standard cron syntax: `minute hour day month weekday`
+## How it works
 
-```
-0 9 * * *      → every day at 09:00
-0 */4 * * *    → every 4 hours
-30 22 * * 1-5  → weekdays at 22:30
-```
+The bridge heartbeat checks every 5 minutes for due tasks. When one fires:
 
-## Task Types
+| Type | Behavior |
+|------|----------|
+| **reminder** | Sends the message to you through the agent's personality |
+| **task** (executor: agent) | Spawns a subagent that works on the prompt, sends result when done |
+| **task** (executor: script) | Runs a shell command, reports exit code + output |
 
-| Type | How it runs |
-|------|-------------|
-| `message` (default) | Sends the message text to the agent as a prompt |
-| `script` | Executes the `command` directly (no agent involvement) |
-
-## Commands
+## Managing tasks in chat
 
 | Command | Description |
 |---------|-------------|
@@ -51,7 +33,42 @@ Standard cron syntax: `minute hour day month weekday`
 | `/tasks trigger <id>` | Run a task immediately |
 | `/tasks log <id>` | Show last 5 runs |
 
-## Status Indicators
+Or just ask: "show my scheduled tasks", "cancel the morning reminder", "pause the backup task".
+
+## CLI reference
+
+For direct management (or scripting):
+
+```bash
+# One-shot reminder
+abtars-task add --at "2026-06-01T15:00" --message "Dentist appointment" --chat-id <ID> --type reminder
+
+# Recurring task (agent executes)
+abtars-task add --schedule "0 17 * * 5" --message "Summarize my week" --chat-id <ID> --type task --executor agent
+
+# Recurring task (script executes)
+abtars-task add --schedule "0 3 * * *" --message "abmind backup" --chat-id <ID> --type task --executor script
+
+# Management
+abtars-task list
+abtars-task remove <id>
+abtars-task pause <id>
+abtars-task resume <id>
+abtars-task history <id>
+```
+
+## Schedule format
+
+Standard cron: `minute hour day month weekday`
+
+```
+0 9 * * *      → every day at 09:00
+0 */4 * * *    → every 4 hours
+30 22 * * 1-5  → weekdays at 22:30
+0 17 * * 5     → Fridays at 17:00
+```
+
+## Status indicators
 
 ```
 ✓  ran successfully today
