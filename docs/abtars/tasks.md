@@ -37,20 +37,11 @@ Or just ask: "show my scheduled tasks", "cancel the morning reminder", "pause th
 
 ## Example: "Every Friday at 5pm, summarize my week"
 
-What happens behind the scenes:
-
 1. Agent reads the task skill, picks the right command
 2. Runs: `abtars-task add --schedule "0 17 * * 5" --message "Summarize what happened this week" --chat-id <your-ID> --type task --executor agent`
 3. Confirms: "Done — every Friday at 17:00 I'll summarize your week."
 
-Then every Friday at 5pm:
-
-4. Heartbeat sees the task is due
-5. Spawns a subagent with the message as its prompt
-6. Subagent recalls the week's memories, composes a summary
-7. Sends you the result on Telegram — a formatted weekly recap
-
-All autonomous — you don't need to be online when it fires.
+Every Friday at 5pm, the bridge fires the task, the agent works on it autonomously, and sends you the result on Telegram.
 
 ## CLI reference
 
