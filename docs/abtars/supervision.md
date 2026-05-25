@@ -151,3 +151,45 @@ pkill -9 -f "node current"
 ```
 
 Then `abtars start` to bring it back cleanly.
+
+## Doctor / Health Checks
+
+`abtars doctor` runs a full runtime health check — verifying that everything the bridge needs is present and correctly configured.
+
+### Automatic on boot
+
+Doctor runs automatically before the bridge starts. If any probe fails, the bridge won't launch until the issue is resolved (or `--fix` repairs it).
+
+### Probes
+
+| Probe | What it checks |
+|-------|---------------|
+| `memory` | abmind DB exists, FTS index healthy |
+| `telegram` | Bot token valid, API reachable |
+| `discord` | Bot token valid, gateway reachable |
+| `heartbeat` | bridge.lock writable, no stale PID |
+| `dashboard` | Web dashboard port available |
+| `ollama` | Ollama API reachable (if configured) |
+| `transport` | Model API keys valid, endpoints respond |
+| `core-files` | Required config files present |
+| `secret-perms` | All secret files are chmod 600 |
+
+### Usage
+
+```bash
+abtars doctor          # check everything, report pass/fail
+abtars doctor --fix    # auto-repair what it can (permissions, missing dirs)
+```
+
+### Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | All probes passed |
+| `1` | One or more failures |
+
+### In-chat
+
+```
+/doctor       Run doctor live and report results in chat
+```
