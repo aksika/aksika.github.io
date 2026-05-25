@@ -33,6 +33,7 @@ export default defineConfig({
           items: [
             { text: 'What is abTARS?', link: '/abtars/' },
             { text: 'Important Notes', link: '/abtars/important' },
+            { text: 'Quick Setup Guide', link: '/abtars/quickstart' },
             { text: 'Why abTARS?', link: '/abtars/why' },
             { text: 'Architecture', link: '/abtars/architecture' },
             { text: 'Installation', link: '/abtars/install' },
