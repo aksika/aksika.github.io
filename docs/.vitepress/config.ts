@@ -50,7 +50,7 @@ export default defineConfig({
             { text: 'Browser Agent', link: '/abtars/browser' },
             { text: 'Context Window', link: '/abtars/context' },
             { text: 'Process Supervision', link: '/abtars/supervision' },
-            { text: 'Secrets', link: '/abtars/secrets' },
+            { text: 'Secrets Vault', link: '/abtars/secrets' },
             { text: 'Token Usage', link: '/abtars/usage' },
           ],
         },

@@ -1,71 +1,73 @@
-# Secrets Management
+# Secrets Vault
 
-API keys and tokens are stored as encrypted files — never in `.env` directly, never committed to git.
+abTARS includes a built-in encrypted vault for API keys, tokens, and session cookies. No external tools needed — no HashiCorp Vault, no AWS Secrets Manager, no 1Password CLI. Everything stays local, encrypted at rest, decrypted only in memory.
 
 ## How it works
 
-1. Secrets live in `~/.abtars/secret/<KEY_NAME>` (one file per key, encrypted)
-2. `.env` references them with `<secret>` placeholder
-3. On boot, abTARS decrypts the file and injects the value
+```
+~/.abtars/secret/
+  OPENROUTER_API_KEY     ← AES-256-GCM encrypted at rest
+  TELEGRAM_BOT_TOKEN     ← decrypted into memory at boot
+  OPENAI_API_KEY         ← never touches disk in plaintext
+  x-cookies.json         ← session cookies, also encrypted
+```
 
-All secret files are encrypted with AES-256-GCM using a key derived from your passphrase (via abmind's master key). See [abmind Security](/abmind/security) for the full key hierarchy.
+- **Drop a file → restart → encrypted.** No commands to learn.
+- **Filename = env var name.** `OPENAI_API_KEY` file → `process.env.OPENAI_API_KEY` at runtime.
+- **Files with extensions** (`.json`) are accessed via tools, not env vars.
+- **AES-256-GCM** encryption using a key derived from your passphrase via scrypt.
+- **Same passphrase on any machine** = same key = portable encrypted backups.
 
-## Setup
-
-During `abtars install`, you set a passphrase. This derives the encryption key. Secrets written after that are automatically encrypted.
-
-For existing installs, run `abtars passwd` to migrate from the legacy random key to passphrase-based encryption.
-
-## Example
+## Adding a secret
 
 ```bash
-# Secrets are written via the migration or onboarding — not manually.
-# The file content looks like:
-cat ~/.abtars/secret/OPENROUTER_API_KEY
-# ENC:AXj2k8...base64blob...
+echo "sk-or-abc123..." > ~/.abtars/secret/OPENROUTER_API_KEY
+chmod 600 ~/.abtars/secret/OPENROUTER_API_KEY
+abtars stop && abtars start
 ```
 
-In `~/.abtars/config/.env`:
+On restart, the file is automatically encrypted. The plaintext value is available in memory only. That's it — no `.env` entry needed.
 
-```env
-OPENROUTER_API_KEY=<secret>
-TELEGRAM_BOT_TOKEN=<secret>
-```
+## What makes it a vault
 
-On boot, abTARS reads the file, decrypts it, and injects the plaintext value into the runtime. The `.env` file never contains the actual secret.
+| Feature | How |
+|---------|-----|
+| **Encryption at rest** | AES-256-GCM, every file in `secret/` |
+| **Auto-encrypt on ingest** | Drop plaintext → boot encrypts in-place |
+| **Memory-only decryption** | Secrets never exist as plaintext on disk after first boot |
+| **Passphrase-derived key** | No random key file to lose — your passphrase IS the key |
+| **Portable** | Copy `secret/` to new machine + same passphrase = works |
+| **Permission enforcement** | Doctor checks chmod 600 on every file |
+| **Log redaction** | Secrets never appear in bridge logs (class-based redaction) |
+| **Model isolation** | Agent cannot read raw secret files — only decrypted values via controlled paths |
 
 ## Passphrase for daemon mode
 
-The bridge needs the passphrase to decrypt secrets at boot. Options:
+The bridge needs the passphrase to decrypt at boot:
 
-1. `ABMIND_PASSPHRASE` environment variable (systemd unit, shell profile)
-2. macOS Keychain (works under launchd — set during `abtars passwd`)
+1. `ABMIND_PASSPHRASE` environment variable (systemd unit, launchd plist)
+2. macOS Keychain (set during `abtars passwd`)
 3. Interactive prompt (only if TTY available)
 
-## Requirements
+## Cookie access
 
-| Rule | Why |
-|------|-----|
-| `chmod 600` on every secret file | `abtars doctor` checks this |
-| One key per file | File name = env var name |
-| Never commit secrets to public repos | `.env` with `<secret>` is safe; actual files are encrypted blobs |
+Files with extensions (like `x-cookies.json`) are encrypted the same way but accessed via the `cookie_read` tool instead of env vars:
 
-## Portability
+```
+cookie_read({ name: "x-cookies" })
+→ decrypts and returns the JSON content
+```
 
-Same passphrase + same username on any machine = same encryption key. You can copy `~/.abtars/secret/` to a new machine, enter your passphrase, and everything decrypts.
+## Doctor checks
+
+`abtars doctor` verifies:
+- All secret files are `chmod 600`
+- No files are empty
+- Encryption is intact (ENC: prefix present)
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
 | `abtars passwd` | Set or change passphrase, re-encrypts all secrets |
-| `abtars doctor` | Verifies secret files exist, permissions correct |
-
-## Doctor check
-
-`abtars doctor` verifies:
-- All `<secret>` references in `.env` have a corresponding file
-- All secret files are `chmod 600`
-- No secret files are empty
-
-Use `abtars doctor --fix` to auto-repair permissions.
+| `abtars doctor` | Verify vault integrity + permissions |
