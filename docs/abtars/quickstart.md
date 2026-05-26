@@ -98,6 +98,10 @@ Send a message to your bot on Telegram — it should respond.
 
 ## Post-install cheat sheet
 
+### Customize the agent's personality
+
+Edit `~/.abmind/memory/core/SOUL.md` — this defines who your agent is: name, personality, language, tone. Check [sould.md](https://sould.md) for inspiration and examples.
+
 ### Useful chat commands
 
 | Command | What it does |
