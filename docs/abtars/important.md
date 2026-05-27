@@ -46,6 +46,15 @@ The abmind integration provides persistent episodic memory, automatic recall, an
 The async session delegation system (spawning background child agents) is in beta. Core lifecycle works (spawn, check, terminate), but the feature is new and edge cases are still being discovered. Use in production with awareness that behavior may evolve.
 :::
 
+### Mid-Run Steering
+
+Send `/wait <message>` while the agent is working to inject a course correction without interrupting. The message is delivered between tool calls — the model sees `[USER] Wait! <message>` and adjusts its approach without losing work already done.
+
+- `/wait` alone (no message) — model stops and asks what you need
+- `/stop` — hard interrupt, kills the current generation entirely
+- Works on Direct-API transport (true mid-run injection between tool rounds)
+- On ACP transport: best-effort (injected after current run completes)
+
 ### Peer-to-Peer (A2A)
 
 Peer communication between abTARS instances (e.g. KP ↔ Molty) works via authenticated HTTP. Stable for basic message exchange. Advanced coordination features are under active development.

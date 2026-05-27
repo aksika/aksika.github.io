@@ -9,7 +9,9 @@ All commands work on Telegram, Discord, and IRC unless noted otherwise.
 | `/reset` | Reload transport config + fresh session |
 | `/reset default` | Restore factory transport.json + fresh session |
 | `/compact` | Compact context window (summarize + fresh session) |
-| `/stop`, `/ctrlc` | Stop current response |
+| `/stop`, `/ctrlc` | Stop current response (hard interrupt) |
+| `/wait [msg]`, `/steer [msg]` | Inject message mid-run without interrupting |
+| `/change` | Switch model/provider (shortcut for `/models change`) |
 | `/restart` | Restart bridge process |
 
 ## Model & Provider
