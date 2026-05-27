@@ -4,7 +4,7 @@ Multiple abTARS instances can communicate directly — agent-to-agent. One insta
 
 ## How it works
 
-Each abTARS instance exposes an **Agent API** — an authenticated HTTP endpoint on port 3100. Other instances call it using the `peer_ask` tool.
+Each abTARS instance exposes an **Agent API** — an authenticated HTTPS endpoint on port 3100. Other instances call it using the `peer_ask` tool.
 
 ```
 ┌──────────┐   peer_ask    ┌──────────┐
@@ -12,6 +12,17 @@ Each abTARS instance exposes an **Agent API** — an authenticated HTTP endpoint
 │ (WSL)    │ ◄──────────── │  (Mac)   │
 └──────────┘   response    └──────────┘
 ```
+
+## Security
+
+Two independent layers:
+
+| Layer | Mechanism | Purpose |
+|-------|-----------|---------|
+| **Transport** | TLS 1.3 with self-signed Ed25519 certs + cert pinning | Wire encryption |
+| **Request auth** | JWT signed with Ed25519 keys | Identity verification |
+
+Both must pass. Compromising one doesn't break the other.
 
 ## peer_ask tool
 
@@ -24,37 +35,42 @@ peer_ask(peer: "molty", message: "What's your current sleep status?")
 
 The remote instance processes the message through its full agent pipeline (model, memory, tools) and returns the response.
 
-## Agent API
-
-The endpoint uses **TLS-PSK** authentication — pre-shared keys, no certificates needed.
-
-- **Port:** 3100
-- **Protocol:** HTTP POST (OpenAI-compatible `/v1/chat/completions`)
-- **Auth:** Bearer token (PSK from `peers.json`)
-
 ## Configuration
 
 `~/.abtars/config/peers.json`:
 
 ```json
 {
-  "self": "kp",
-  "peers": [
-    {
-      "name": "molty",
-      "host": "100.82.167.127:3100",
-      "psk": "shared-secret-here"
+  "self": {
+    "name": "kp",
+    "signingKey": "<Ed25519 private key for JWT signing>"
+  },
+  "peers": {
+    "molty": {
+      "host": "100.82.167.127",
+      "port": 3100,
+      "token": "<shared secret for JWT>",
+      "verifyKey": "<molty's Ed25519 public key>",
+      "certFingerprint": "SHA256:B3:9A:5D:...",
+      "certPem": "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
     }
-  ]
+  }
 }
 ```
 
 | Field | Purpose |
 |-------|---------|
-| `self` | This instance's name (how others address it) |
-| `peers[].name` | Peer's name (used in `peer_ask`) |
-| `peers[].host` | Peer's address and port |
-| `peers[].psk` | Pre-shared key for authentication |
+| `self.name` | This instance's name |
+| `peers.<name>.host` | Peer's IP/hostname |
+| `peers.<name>.port` | Peer's Agent API port (default 3100) |
+| `peers.<name>.token` | Shared secret for JWT auth |
+| `peers.<name>.verifyKey` | Peer's public key for JWT verification |
+| `peers.<name>.certFingerprint` | Peer's TLS cert SHA-256 fingerprint |
+| `peers.<name>.certPem` | Peer's full TLS certificate (PEM) |
+
+## Setting up TLS certificates
+
+See the [TLS Certificate Setup](/abtars/peers-tls) guide for step-by-step instructions.
 
 ## Use cases
 
@@ -62,13 +78,3 @@ The endpoint uses **TLS-PSK** authentication — pre-shared keys, no certificate
 - **Information sharing:** "What did you tell the user last?"
 - **Coordinated tasks:** One instance triggers work on another
 - **Health checks:** Verify a peer is alive and responsive
-
-## Enabling the Agent API
-
-Start the bridge with `--agent`:
-
-```bash
-abtars start --agent
-```
-
-This opens port 3100 for incoming peer requests. Without `--agent`, the instance can call peers but won't accept incoming calls.

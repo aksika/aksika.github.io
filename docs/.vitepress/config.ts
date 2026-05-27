@@ -47,6 +47,7 @@ export default defineConfig({
             { text: 'Hooks', link: '/abtars/hooks' },
             { text: 'Multi-User', link: '/abtars/users' },
             { text: 'Peer-to-Peer', link: '/abtars/peers' },
+            { text: 'TLS Certificate Setup', link: '/abtars/peers-tls' },
             { text: 'Browser Agent', link: '/abtars/browser' },
             { text: 'Context Window', link: '/abtars/context' },
             { text: 'Process Supervision', link: '/abtars/supervision' },
