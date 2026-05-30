@@ -35,6 +35,7 @@ jobs:
           ref: dev
           path: _abtars
           sparse-checkout: docs/wiki
+        continue-on-error: true
 
       - name: Assemble wiki sources
         run: |
