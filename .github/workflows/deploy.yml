@@ -27,7 +27,8 @@ jobs:
           repository: aksika/abmind
           ref: dev
           path: _abmind
-          sparse-checkout: docs/wiki
+          sparse-checkout: |
+            docs/wiki
 
       - uses: actions/checkout@v4
         with:
@@ -39,8 +40,9 @@ jobs:
 
       - name: Assemble wiki sources
         run: |
-          cp -r _abmind/docs/wiki docs/abmind
-          cp -r _abtars/docs/wiki docs/abtars
+          cp -r _abmind/docs/wiki docs/abmind || echo "abmind wiki not available"
+          cp -r _abtars/docs/wiki docs/abtars || echo "abtars wiki not available (repo private?)"
+          mkdir -p docs/abmind docs/abtars
 
       - uses: actions/setup-node@v4
         with:
