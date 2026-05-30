@@ -3,6 +3,9 @@ name: Deploy docs
 on:
   push:
     branches: [main]
+  repository_dispatch:
+    types: [wiki-updated]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,12 +21,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: aksika/abmind
+          ref: dev
+          path: _abmind
+          sparse-checkout: docs/wiki
+
+      - uses: actions/checkout@v4
+        with:
+          repository: aksika/abtars
+          ref: dev
+          path: _abtars
+          sparse-checkout: docs/wiki
+
+      - name: Assemble wiki sources
+        run: |
+          cp -r _abmind/docs/wiki docs/abmind
+          cp -r _abtars/docs/wiki docs/abtars
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
       - run: npm run build
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
