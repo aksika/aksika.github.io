@@ -16,11 +16,11 @@ export default defineConfig({
 
     sidebar: {
       '/abmind/': [
+        { text: 'Overview', link: '/abmind/' },
+        { text: 'Why abmind', link: '/abmind/why' },
         {
           text: 'Getting Started',
           items: [
-            { text: 'Overview', link: '/abmind/' },
-            { text: 'Why abmind', link: '/abmind/why' },
             { text: 'Installation', link: '/abmind/install' },
             { text: 'Integration Guide', link: '/abmind/integration' },
           ],
@@ -42,11 +42,11 @@ export default defineConfig({
         },
       ],
       '/abtars/': [
+        { text: 'Overview', link: '/abtars/' },
+        { text: 'Why abTARS', link: '/abtars/why' },
         {
           text: 'Getting Started',
           items: [
-            { text: 'Overview', link: '/abtars/' },
-            { text: 'Why abTARS', link: '/abtars/why' },
             { text: 'Quick Start', link: '/abtars/quickstart' },
             { text: 'Installation', link: '/abtars/install' },
             { text: 'Health Check', link: '/abtars/healthcheck' },
