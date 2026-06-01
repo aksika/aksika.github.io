@@ -39,6 +39,7 @@ export default defineConfig({
             { text: 'Why abTARS', link: '/abtars/why' },
             { text: 'Quick Start', link: '/abtars/quickstart' },
             { text: 'Installation', link: '/abtars/install' },
+            { text: 'Health Check', link: '/abtars/healthcheck' },
           ],
         },
         {
@@ -70,10 +71,12 @@ export default defineConfig({
         {
           text: 'Operations',
           items: [
+            { text: 'Managing', link: '/abtars/managing' },
             { text: 'Architecture', link: '/abtars/architecture' },
             { text: 'Resilience', link: '/abtars/resilience' },
             { text: 'Supervision', link: '/abtars/supervision' },
             { text: 'Logging', link: '/abtars/logging' },
+            { text: 'Troubleshooting', link: '/abtars/troubleshooting' },
             { text: 'Usage & Limits', link: '/abtars/usage' },
           ],
         },
