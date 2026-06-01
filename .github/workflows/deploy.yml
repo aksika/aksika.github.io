@@ -35,8 +35,8 @@ jobs:
           repository: aksika/abtars
           ref: dev
           path: _abtars
-          sparse-checkout: docs/wiki
-        continue-on-error: true
+          sparse-checkout: |
+            docs/wiki
 
       - name: Assemble wiki sources
         run: |
