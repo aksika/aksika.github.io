@@ -68,7 +68,7 @@ When a scheduled task fails, a dedicated self-healing agent session diagnoses an
 
 **Flow:**
 
-1. Task fails → user sees "⚠️ &lt;task&gt; failed"
+1. Task fails → user sees `⚠️ &lt;task&gt; failed`
 2. SHA fires in an isolated `_S_` (System) session → user sees `🔧 Calling self-healing agent`
 3. SHA diagnoses root cause and attempts programmatic fix
 4. If fixed → task succeeds on next tick
