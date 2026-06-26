@@ -55,7 +55,7 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Quick Start', link: '/abtars/quickstart' },
-            { text: 'Installation', link: '/abtars/install' },
+            { text: 'Install: Stable — 0.3.3', link: '/abtars/install' },
             { text: 'Health Check', link: '/abtars/healthcheck' },
           ],
         },
