@@ -40,9 +40,8 @@ jobs:
 
       - name: Assemble wiki sources
         run: |
-          cp -r _abmind/docs/wiki docs/abmind || echo "abmind wiki not available"
-          cp -r _abtars/docs/wiki docs/abtars || echo "abtars wiki not available (repo private?)"
-          mkdir -p docs/abmind docs/abtars
+          cp -rf _abmind/docs/wiki/* docs/abmind/ || echo "abmind wiki not available"
+          cp -rf _abtars/docs/wiki/* docs/abtars/ || echo "abtars wiki not available (repo private?)"
 
       - uses: actions/setup-node@v4
         with:
