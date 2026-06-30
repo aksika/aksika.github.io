@@ -120,16 +120,7 @@ previous: 0.3.4-alpha.4
 | `~/.abtars/memory.db` (etc) | Preserved |
 | `~/.abmind/` | Preserved |
 
-**Warning**: the systemd watchdog unit references `~/.abtars-releases/src/abtars/scripts/abtars-watchdog.sh`. For `--dev` deploys, this works (src/ is the git checkout). For `--alpha` deploys, the new script is at `releases/<version>/scripts/`, not `src/`. See [issue #1263](https://github.com/aksika/abproject/issues/1263) for the fix.
-
-**Workaround** until #1263 is fixed:
-
-```bash
-# After --alpha deploy, refresh src/ manually
-cp ~/.abtars-releases/<new-version>/scripts/abtars-watchdog.sh \
-   ~/.abtars-releases/src/abtars/scripts/abtars-watchdog.sh
-abtars stop && abtars start
-```
+**Note**: the systemd watchdog unit references `~/.abtars-releases/src/abtars/scripts/abtars-watchdog.sh` (the dev checkout). This is intentional for `--dev` deploys: `git pull` in `src/` immediately makes new code live. For `--alpha` deploys, the new script is at `releases/<version>/scripts/`. #1263 tracks the analysis and is LOW priority — the architecture is by design.
 
 ## Verify after update
 

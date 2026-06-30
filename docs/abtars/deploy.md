@@ -40,7 +40,7 @@ abtars restart --cold
 | `releases/<version>/templates/` | `~/.abtars/` (reconciled) | Config templates, skills, prompts |
 | `releases/<version>/scripts/abtars-watchdog.{sh,service,plist}` | `~/.abtars-releases/src/abtars/scripts/` (for --dev) OR stays in `<version>/scripts/` (for --alpha) | Watchdog script and service definition |
 
-**`src/` is a git checkout**, updated only by `--dev` deploys (via `git pull`). For `--alpha` deploys, the new watchdog script is at `<version>/scripts/`, not `src/`. The systemd unit currently references `src/` (see [issue #1263](https://github.com/aksika/abproject/issues/1263)).
+**`src/` is a git checkout**, updated only by `--dev` deploys (via `git pull`). The systemd unit references `src/abtars/scripts/abtars-watchdog.sh` so that `git pull` in `src/` immediately makes new code live without rewriting the unit. This is intentional architecture (#1263 analysis) — `--alpha` deploys target `<version>/scripts/` (different from `src/`) and are a different use case.
 
 ## Directory layout after deploy
 
