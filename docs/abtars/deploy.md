@@ -5,69 +5,103 @@ How code gets from source to a running bridge.
 ## Quick reference
 
 ```bash
-# Full deploy (build + stage + restart)
-abtars update
+# Update to latest alpha from npm
+abtars update --alpha
 
-# Restart without rebuild
+# Update to latest stable
+abtars update --stable
+
+# Update from local git checkout (dev iteration)
+abtars update --dev .
+
+# Restart without rebuilding
 abtars restart
 
-# Cold restart (starts supervisor if dead)
+# Cold restart (starts watchdog if dead)
 abtars restart --cold
 ```
 
 ## What `abtars update` does
 
-1. **Build** — `npm run build` (TypeScript → `dist/`)
-2. **Stage** — copies built artifacts + persona + CLIs + skills to `~/.abtars/`
+1. **Fetch** — pulls the new version (npm tarball or local checkout)
+2. **Stage** — copies artifacts to `~/.abtars-releases/<version>/`
 3. **Doctor** — runs `abtars doctor --fix` (permissions, stale locks, missing dirs)
-4. **Restart** — signals the bridge to restart (warm or cold)
+4. **Activate** — atomically swaps the `app` symlink: `~/.abtars/app → ~/.abtars-releases/<new-version>`
+5. **Restart** — writes `update:<version>` to `.start-reason`, watchdog exits, systemd/launchd respawns with new code
+6. **Verify** — polls for bridge health (timeout 30s)
 
 ## What gets deployed
 
 | Source | Target | Contents |
 |--------|--------|----------|
-| `dist/` | `~/.abtars/current/` | Compiled JS |
-| `persona/core/` | `~/.abtars/core/` | SOUL, TOOLS, profiles (never overwrites newer) |
-| `persona/prompts/` | `~/.abtars/prompts/` | Prompt templates |
-| `persona/skills/` | `~/.abtars/skills/core/` | Core skills |
-| `persona/agents/` | `~/.abtars/agents/` | Sub-agent rules |
-| `persona/tasks/` | `~/.abtars/tasks/` | Task descriptions |
-| `src/cli/abtars-*.ts` | `~/.local/bin/abtars-*` | CLI tools |
-| `scripts/watchdog.sh` | `~/.abtars/watchdog.sh` | External watchdog |
+| npm tarball or `src/` | `~/.abtars-releases/<version>/` | Bundle + scripts + skills + prompts + install-manifest.json |
+| `releases/<version>/bundle/abtars.js` | `~/.abtars/app/bundle/abtars.js` (via symlink) | Bridge entry point |
+| `releases/<version>/bundle/abtars-cli.js` | `~/.abtars/app/bundle/abtars-cli.js` (via symlink) | CLI entry point |
+| `releases/<version>/templates/` | `~/.abtars/` (reconciled) | Config templates, skills, prompts |
+| `releases/<version>/scripts/abtars-watchdog.{sh,service,plist}` | `~/.abtars-releases/src/abtars/scripts/` (for --dev) OR stays in `<version>/scripts/` (for --alpha) | Watchdog script and service definition |
 
-All copies use `safe_cp` — never overwrites a file that's newer in production.
+**`src/` is a git checkout**, updated only by `--dev` deploys (via `git pull`). For `--alpha` deploys, the new watchdog script is at `<version>/scripts/`, not `src/`. The systemd unit currently references `src/` (see [issue #1263](https://github.com/aksika/abproject/issues/1263)).
+
+## Directory layout after deploy
+
+```
+~/.abtars-releases/
+├── 0.3.4-alpha.4/           # previous release
+├── 0.3.4-alpha.5/           # active release
+│   ├── bundle/
+│   │   ├── abtars.js        # bridge entry
+│   │   ├── abtars-cli.js    # CLI entry
+│   │   └── ...              # chunked modules
+│   ├── scripts/
+│   │   ├── abtars-watchdog.sh
+│   │   ├── abtars-watchdog.service
+│   │   └── com.abtars.watchdog.plist
+│   ├── templates/           # config templates, skills, prompts
+│   └── install-manifest.json
+├── src/                     # git checkout (for --dev deploys)
+│   └── abtars/
+│       └── scripts/
+│           └── abtars-watchdog.sh  # what systemd runs
+└── app.staging/             # transient (during deploy)
+
+~/.abtars/
+├── app → ~/.abtars-releases/0.3.4-alpha.5/   # symlink
+├── config/                  # preserved across deploys
+├── secret/                  # preserved across deploys
+├── logs/                    # preserved across deploys
+├── state/                   # preserved across deploys
+├── kanban/                  # preserved across deploys
+└── manifest.json            # updated with new version
+```
 
 ## Restart modes
 
 | Mode | How | When to use |
 |------|-----|-------------|
-| Warm | Writes `restartRequested` to `bridge.lock` → heartbeat reads → `process.exit(0)` → supervisor respawns | Normal deploys |
-| Cold | Same as warm if bridge alive. If dead: starts supervisor directly. | After crashes, first boot |
-
-## Deploy to remote (Molty)
-
-```bash
-# From WSL — full deploy to Mac mini
-cd ~/abmind && git pull --ff-only origin dev && npm run build
-cd ~/abtars && git fetch origin dev && git checkout <commit>
-node esbuild.config.js && abtars update --from-local
-```
-
-Use `git checkout <commit>` (moves HEAD) — the release version is derived from `git rev-parse --short HEAD`.
+| Warm | Writes `update:<version>` to `.start-reason` → watchdog reads → `process.exit(0)` → supervisor respawns with new code | Normal `abtars update` |
+| Cold | Same as warm if bridge alive. If dead: starts watchdog directly. | After crashes, first boot |
+| Force | `abtars stop --force` → kills watchdog first, then bridge. Required on Mac (launchd respawns immediately otherwise). | When `abtars stop` hangs |
 
 ## Doctor on every boot
 
-The watchdog runs `doctor.sh --fix` before every bridge spawn:
+The watchdog runs `abtars doctor --fix` before every bridge spawn:
 
 ```
-watchdog.sh → doctor.sh --fix → node current/main.js
+watchdog.sh → abtars doctor --fix → node app/bundle/abtars.js
 ```
 
-Doctor auto-fixes: permissions, missing dirs, stale locks, unloaded supervisor. If it can't fix something, it warns but doesn't block startup.
+Doctor auto-fixes:
+- File permissions (`~/.abtars/secret/`, `~/.abtars/config/`, `~/.abmind/secret/`)
+- Stale locks (`deploy.lock`, `.start-reason`, `sleep.lock`, `memory.sock`)
+- Missing directories (`logs/`, `workspace/`, `overflow/`, `received/`)
+- Orphan processes (kiro-cli, abtars-sleep, duplicate bridges)
+- Watchdog systemd unit (copies if missing, enables, starts)
+
+If doctor can't fix something, it warns but doesn't block startup.
 
 ## Platform enablement
 
-`.env` is the single source of truth for which components start:
+`~/.abtars/config/.env` is the single source of truth for which components start:
 
 ```bash
 TELEGRAM_ENABLED=true
@@ -75,12 +109,46 @@ DISCORD_ENABLED=true
 IRC_ENABLED=false
 ENABLE_DASHBOARD=true
 ENABLE_AGENT_API=true
+SELFHEAL_ENABLED=true
 ```
 
-No CLI flags needed for normal operation. Watchdog service files should pass NO args to the bridge.
+Set by `abtars install` based on which secrets are provided. Edit `.env` to enable/disable platforms without re-running install.
+
+## Deploy to remote (Molty)
+
+For cross-machine deploys (Linux dev → Mac target):
+
+```bash
+# On the Linux dev machine
+cd ~/workspace/ab/abtars
+git pull --ff-only origin dev
+npm run bundle
+
+# Bundle the release
+tar czf abtars-bundle.tgz bundle/ scripts/ templates/ package.json
+
+# Copy to Mac
+scp abtars-bundle.tgz molty:~/
+
+# On the Mac
+tar xzf abtars-bundle.tgz
+abtars update --dev .
+```
+
+Or use the bundled `scripts/emergency-deploy.sh` for one-shot remote deploys with rollback.
 
 ## Rollback
 
 ```bash
-abtars rollback    # Restores previous release from ~/.abtars/previous/
+abtars rollback    # restores previous release
 ```
+
+Up to 3 previous releases are kept in `~/.abtars-releases/`. See [Upgrading](./upgrade) for details.
+
+## See also
+
+- [Installation](./install) — fresh install
+- [Upgrading](./upgrade) — version updates
+- [Architecture](./architecture) — system design
+- [Boot Phases](./boot) — startup sequence
+- [Health Check](./healthcheck) — doctor probes

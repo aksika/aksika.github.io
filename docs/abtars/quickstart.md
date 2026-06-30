@@ -1,98 +1,93 @@
 # Quick Start
 
-Steps only. For detailed explanations, see [Installation](./install.md).
+Minimal steps. For detailed explanations, see [Installation](./install).
 
 ## 1. Install
 
 ```bash
-npm install -g abtars abmind
+npm install -g abtars@alpha abmind@alpha
 ```
 
-Requires Node.js 22+. For alpha builds: `npm install -g abtars@alpha abmind@alpha`
+Requires Node.js 22+.
 
 ## 2. Setup
 
 ```bash
-abtars install
-abtars update
-abtars onboard
+abtars install --non-interactive --accept-risk \
+  --instance-name KP \
+  --user-name aksika \
+  --telegram-token "123456:ABC..." \
+  --telegram-chat-id 7773842843 \
+  --default-provider openrouter \
+  --api-key "sk-or-v1-..." \
+  --passphrase "your-passphrase"
+
+abmind install --non-interactive --force \
+  --passphrase "your-passphrase" \
+  --username aksika \
+  --agent-name KP
 ```
 
-The onboard wizard asks for:
-- Telegram bot token (from [@BotFather](https://t.me/BotFather))
-- Model provider (Kiro CLI, OpenRouter, ollama, etc.)
-- Agent name and passphrase (for memory encryption)
+The passphrase must match between abtars and abmind — both derive their encryption keys from it.
 
 ## 3. Start
 
 ```bash
-sudo $(which abtars) daemon install
+abtars start
 ```
-
-Done. Your bot is live on Telegram.
 
 ## 4. Verify
 
 ```bash
-abtars status       # should show bridge: ● running
-abtars doctor       # should show all green
+abtars status       # bridge: ● running
+abtars doctor       # all green
 ```
 
 Send a message to your bot — it should respond.
 
-## Post-install cheat sheet
+## Cheat sheet
 
-### Telegram commands
-
-| Command | What it does |
-|---------|-------------|
-| `/status` | Bridge health, uptime, model |
-| `/model` | Switch model/provider on the fly |
-| `/new` | Start a fresh conversation session |
-| `/sleep` | Trigger sleep + memory consolidation |
-| `/restart` | Restart the bridge |
-| `/help` | Full command list |
-
-### Customize personality
-
-Edit `~/.abmind/memory/core/SOUL.md` — defines who your agent is: name, personality, language, tone.
-
-### Updating
+### Update
 
 ```bash
-npm update -g abtars abmind
-abtars update
+npm update -g abtars@alpha abmind@alpha
+abtars update --alpha
 ```
 
 ### Stop / restart
 
 ```bash
-sudo systemctl stop abtars      # stop
-sudo systemctl restart abtars   # restart
+abtars stop
+abtars start
 ```
 
-### Something broke?
+### Diagnose
 
 ```bash
 abtars doctor --fix
-tail -20 ~/.abtars/logs/bridge-$(date +%F).log
+tail -50 ~/.abtars/logs/watchdog.log
+tail -50 ~/.abtars/logs/bridge.log
 ```
-
-See [Health Check](./healthcheck.md) for more.
 
 ### Where is everything?
 
 ```
 ~/.abtars/
-├── config/          .env, transport.json, models.json, users.json
-├── secret/          API keys (encrypted at rest)
-├── logs/            Daily log files
-├── skills/          core/, self/, custom/
-├── releases/        Versioned deployments
-└── current → releases/<version>
+├── config/          .env, transport.json, users.json, peers.json, abtars.key
+├── secret/          API keys (plaintext or ENC:base64)
+├── logs/            watchdog.log, bridge.log, watchdog-launchd.log
+├── releases/        Versioned deployments (via ~/.abtars-releases/)
+└── manifest.json    Install manifest
 
 ~/.abmind/
-├── memory/core/     SOUL.md, agent_notes.md, user_profile.md
-├── memory/memory.db SQLite memory database
-└── secret/          Encryption key
+├── memory/          core/ (SOUL.md, etc.) + memory.db (SQLite)
+├── secret/          abmind.key
+└── manifest.json
 ```
+
+## See also
+
+- [Installation](./install) — detailed procedure, troubleshooting, both platforms
+- [Upgrading](./upgrade) — update to a new version
+- [Health Check](./healthcheck) — doctor probes
+- [Troubleshooting](./troubleshooting) — common issues
