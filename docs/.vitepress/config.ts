@@ -53,12 +53,16 @@ export default defineConfig({
         { text: 'Overview', link: '/abtars/' },
         { text: 'Why abTARS', link: '/abtars/why' },
         {
-          text: 'Getting Started',
+          text: 'Installation',
           items: [
             { text: 'Quick Start', link: '/abtars/quickstart' },
             { text: 'Installation', link: '/abtars/install' },
             { text: 'Do I Need sudo?', link: '/abtars/no-sudo' },
             { text: 'Health Check', link: '/abtars/healthcheck' },
+            { text: 'Upgrading', link: '/abtars/upgrade' },
+            { text: 'Backup & Restore', link: '/abtars/backup' },
+            { text: 'Stop & Uninstall', link: '/abtars/stop-uninstall' },
+            { text: 'Troubleshooting', link: '/abtars/troubleshooting' },
           ],
         },
         {
@@ -100,18 +104,14 @@ export default defineConfig({
           text: 'Operations',
           items: [
             { text: 'Managing', link: '/abtars/managing' },
+            { text: 'Logging', link: '/abtars/logging' },
+            { text: 'Usage & Limits', link: '/abtars/usage' },
             { text: 'Deploy Pipeline', link: '/abtars/deploy' },
             { text: 'Architecture', link: '/abtars/architecture' },
             { text: 'Boot Phases', link: '/abtars/boot' },
             { text: 'Capabilities', link: '/abtars/capabilities' },
             { text: 'Resilience', link: '/abtars/resilience' },
             { text: 'Supervision', link: '/abtars/supervision' },
-            { text: 'Logging', link: '/abtars/logging' },
-            { text: 'Backup & Restore', link: '/abtars/backup' },
-            { text: 'Troubleshooting', link: '/abtars/troubleshooting' },
-            { text: 'Usage & Limits', link: '/abtars/usage' },
-            { text: 'Upgrading', link: '/abtars/upgrade' },
-            { text: 'Stop & Uninstall', link: '/abtars/stop-uninstall' },
           ],
         },
         {
