@@ -55,6 +55,7 @@ export default defineConfig({
         {
           text: 'Installation',
           items: [
+            { text: 'Prerequisites', link: '/abtars/prerequisites' },
             { text: 'Quick Start', link: '/abtars/quickstart' },
             { text: 'Installation', link: '/abtars/install' },
             { text: 'Do I Need sudo?', link: '/abtars/no-sudo' },
