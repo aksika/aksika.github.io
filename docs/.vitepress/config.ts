@@ -62,7 +62,7 @@ export default defineConfig({
             { text: 'Upgrading', link: '/abtars/upgrade' },
             { text: 'Backup & Restore', link: '/abtars/backup' },
             { text: 'Stop & Uninstall', link: '/abtars/stop-uninstall' },
-            { text: 'Troubleshooting', link: '/abtars/troubleshooting' },
+            { text: 'Install Troubleshooting', link: '/abtars/troubleshooting' },
           ],
         },
         {
