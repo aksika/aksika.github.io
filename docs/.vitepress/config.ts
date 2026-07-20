@@ -58,6 +58,7 @@ export default defineConfig({
             { text: 'Prerequisites', link: '/abtars/prerequisites' },
             { text: 'Quick Start', link: '/abtars/quickstart' },
             { text: 'Installation', link: '/abtars/install' },
+            { text: 'Dependencies', link: '/abtars/dependencies' },
             { text: 'Do I Need sudo?', link: '/abtars/no-sudo' },
             { text: 'Health Check', link: '/abtars/healthcheck' },
             { text: 'Upgrading', link: '/abtars/upgrade' },
