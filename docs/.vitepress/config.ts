@@ -36,6 +36,7 @@ export default defineConfig({
             { text: 'Sleep Pipeline', link: '/abmind/sleep' },
             { text: 'Session Context', link: '/abmind/session-context' },
             { text: 'Hooks', link: '/abmind/hooks' },
+            { text: 'Daemon Service', link: '/abmind/service' },
             { text: 'Security', link: '/abmind/security' },
           ],
         },
