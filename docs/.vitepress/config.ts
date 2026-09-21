@@ -23,6 +23,7 @@ export default defineConfig({
           items: [
             { text: 'Installation', link: '/abmind/install' },
             { text: 'Integration Guide', link: '/abmind/integration' },
+            { text: 'Hermes-Agent Setup', link: '/abmind/hermes' },
           ],
         },
         {
