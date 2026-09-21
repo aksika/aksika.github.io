@@ -41,6 +41,13 @@ export default defineConfig({
           ],
         },
         {
+          text: 'System One',
+          items: [
+            { text: 'Judgments', link: '/abmind/judgment' },
+            { text: 'Laya Sidecar', link: '/abmind/laya' },
+          ],
+        },
+        {
           text: 'Reference',
           items: [
             { text: 'Configuration', link: '/abmind/configuration' },
