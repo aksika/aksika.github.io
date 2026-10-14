@@ -60,7 +60,7 @@ export default defineConfig({
       ],
       '/abtars/': [
         { text: 'Overview', link: '/abtars/' },
-        { text: 'Why abTARS', link: '/abtars/why' },
+        { text: 'What is abTARS', link: '/abtars/why' },
         {
           text: 'Installation',
           items: [
